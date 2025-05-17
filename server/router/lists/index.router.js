@@ -1,42 +1,31 @@
-module.exports = async(req, res, next) => {
+module.exports = async (req, res, next) => {
     const pool = req.app.database;
 
-    // NEED TO MAKE THIS SUPPORT MULTIPLE QUERY PARAMETERS
+    let query = "SELECT * FROM todo_app_list";
+    const conditions = [];
+    const params = [];
 
-    if(req.query.id) {
-        const [rows, fields] = await pool.query(`SELECT * FROM todo_app_list WHERE list_id = ?;`, [req.query.id]);
+    try {
+        if (req.query.id) {
+            conditions.push("`list_id` = ?");
+            params.push(req.query.id);
+        }
+
+        if (req.query.name) {
+            conditions.push("`list_name` = ?");
+            params.push(req.query.name);
+        }
+
+        // NEED TO ADD A FILTER BY CREATED DATE OR UPDATE
+
+        if (conditions.length > 0) {
+            query += " WHERE " + conditions.join(" AND ");
+        }
+
+        const [rows] = await pool.query(query, params);
+
         res.json(rows);
-        next();
-        return
+    } catch (err) {
+        next(err);
     }
-
-    if(req.query.name) {
-        const [rows, fields] = await pool.query(`SELECT * FROM todo_app_list WHERE list_name = ?;`, [req.query.name]);
-        res.json(rows);
-        next();
-        return
-    }
-
-    // NEEDS MORE WORK WILL COME BACK TO.
-
-    // if(req.query.updatedDate) {
-    //     const [rows, fields] = await pool.query(`SELECT * FROM todo_app_list WHERE list_id = ?;`, [req.query.updatedDate]);
-    //     res.json(rows);
-    //     next();
-    //     return
-    // }
-
-    // if(req.query.createdDate) {
-    //     const [rows, fields] = await pool.query(`SELECT * FROM todo_app_list WHERE list_id = ?;`, [req.query.id]);
-    //     res.json(rows);
-    //     next();
-    //     return
-    // }
-
-    
-    const [rows, fields] = await pool.query('SELECT * FROM todo_app_list');
-
-    res.json(rows);
-
-    next();
-}
+};
