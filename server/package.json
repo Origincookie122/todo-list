@@ -19,7 +19,9 @@
   "homepage": "https://github.com/Origincookie122/todo-list#readme",
   "dependencies": {
     "express": "^5.1.0",
+    "fs": "^0.0.1-security",
     "mysql2": "^3.14.1",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7"
   }
 }
