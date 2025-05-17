@@ -1,28 +1,23 @@
-module.exports = async(req, res, next) => {
+module.exports = async (req, res, next) => {
     const pool = req.app.database;
+    try {
+        let query = 'SELECT * FROM todo_app_items';
+        const params = [];
 
-    // THIS IS AN IDIOTIC WAY OF DOING THIS.... NEEDS REFACTORING
+        if (req.query.id && req.query.list_id) {
+            query += ' WHERE item_id = ? AND list_id = ?';
+            params.push(req.query.id, req.query.list_id);
+        } else if (req.query.id) {
+            query += ' WHERE item_id = ?';
+            params.push(req.query.id);
+        } else if (req.query.list_id) {
+            query += ' WHERE list_id = ?';
+            params.push(req.query.list_id);
+        }
 
-    if(req.query.list_id && req.query.id) {
-        const [rows, fields] = await pool.query(`SELECT * FROM todo_app_items WHERE item_id = ? AND list_id = ?;`, [req.query.id, req.query.list_id]);
+        const [rows] = await pool.query(query, params);
         res.json(rows);
-        next();
-        return
-    } else if(req.query.id) {
-        const [rows, fields] = await pool.query(`SELECT * FROM todo_app_items WHERE item_id = ?;`, [req.query.id]);
-        res.json(rows);
-        next();
-        return
-    } else if(req.query.list_id) {
-        const [rows, fields] = await pool.query(`SELECT * FROM todo_app_items WHERE list_id = ?;`, [req.query.list_id]);
-        res.json(rows);
-        next();
-        return
+    } catch (err) {
+        next(err);
     }
-
-    const [rows, fields] = await pool.query('SELECT * FROM todo_app_items');
-
-    res.json(rows);
-
-    next();
-}
+};
