@@ -1,10 +1,8 @@
 const config = require("./config/config.json");
-
+const routerHandler = require('./handler/routerLoader.js');
 const app = require('express')();
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+routerHandler(app);
 
 app.listen(config.Server.port, () => {
     console.log(`Server started on port ${config.Server.port}`);
