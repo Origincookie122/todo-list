@@ -11,6 +11,7 @@ This is based off of a CRUD(Create, Read, Update, Delete).
 * ### Extract server.zip
 * ### CD into server directory
 * ### Run the following commands
+* ### Rename ex.config.json to config.json and fill out the values
 
 ```bash
 $ npm install
